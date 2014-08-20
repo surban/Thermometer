@@ -11,6 +11,7 @@ module Client =
     let dayChart = Div []
     let weekChart = Div []
     let monthChart = Div []
+    let cleaningChart = Div []
 
     let ShowAsTable (data: Remoting.DataPoint list) =
         Table [
@@ -48,6 +49,7 @@ module Client =
                 Credits = CreditsCfg(Enabled=false)
             )) |> ignore
 
+
     let RefreshData () =
         async {
             let noDiff = TimeSpan()
@@ -69,9 +71,15 @@ module Client =
             let! thisMonthData = Remoting.GetData startOfMonth (startOfMonth.AddMonths(1)) noDiff
             let! lastMonthData = Remoting.GetData (startOfMonth - monthSpan) startOfMonth monthSpan
             do CreateChart monthChart.Body "month" {TimeFormat with day="%e"; week="%e"} thisMonthData lastMonthData
+
+            let cleaningSpan = TimeSpan(0, 1, 0, 0)
+            let startOfCleaning = startOfToday.AddHours(6.5)
+            let! todayCleaning = Remoting.GetData startOfCleaning (startOfCleaning + cleaningSpan) noDiff
+            let! yesterdayCleaning = Remoting.GetData (startOfCleaning - daySpan) (startOfCleaning + cleaningSpan-daySpan) daySpan
+            do CreateChart cleaningChart.Body "day (between 6h30 and 7h30)" {TimeFormat with hour="%H:%M"} todayCleaning yesterdayCleaning
         } |> Async.Start
 
     let Main () =
         RefreshData()
-        Div [] -< [dayChart; weekChart; monthChart]
+        Div [] -< [dayChart; weekChart; monthChart; cleaningChart]
 
