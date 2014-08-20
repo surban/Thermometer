@@ -1,4 +1,4 @@
-TWeb/Content/WebSharper/
+TWeb/Content/WebSharper/*
 TWeb/Scripts/WebSharper/
 
 ## Ignore Visual Studio temporary files, build results, and

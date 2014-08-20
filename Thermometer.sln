@@ -1,13 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TGather", "TGather\TGather.fsproj", "{AFD84427-C27D-4D41-A001-27BFF8A04524}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TDatabase", "TDatabase\TDatabase.sqlproj", "{1066DEF9-0696-4ABB-ADE4-5AFC321419D7}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TWeb", "TWeb\TWeb.fsproj", "{DD2A2281-AA86-4F47-B7FA-1037AA0536D0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A86051FD-9F92-43D3-9583-B1E46586DD1A}"
+	ProjectSection(SolutionItems) = preProject
+		deploy.cmd = deploy.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
