@@ -78,6 +78,7 @@ module Service =
                             timer.Start())
 
     let startAcquire() =
+        Thermometer.acquireAndLogTemperate()
         timer.Start()
 
     let stopAcquire() =

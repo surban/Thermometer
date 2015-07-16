@@ -72,11 +72,11 @@ module Client =
             let! lastMonthData = Remoting.GetData (startOfMonth - monthSpan) startOfMonth monthSpan
             do CreateChart monthChart.Body "month" {TimeFormat with day="%e"; week="%e"} thisMonthData lastMonthData
 
-            let cleaningSpan = TimeSpan(0, 1, 0, 0)
-            let startOfCleaning = startOfToday.AddHours(6.5)
-            let! todayCleaning = Remoting.GetData startOfCleaning (startOfCleaning + cleaningSpan) noDiff
-            let! yesterdayCleaning = Remoting.GetData (startOfCleaning - daySpan) (startOfCleaning + cleaningSpan-daySpan) daySpan
-            do CreateChart cleaningChart.Body "day (between 6h30 and 7h30)" {TimeFormat with hour="%H:%M"} todayCleaning yesterdayCleaning
+            //let cleaningSpan = TimeSpan(0, 1, 0, 0)
+            //let startOfCleaning = startOfToday.AddHours(6.5)
+            //let! todayCleaning = Remoting.GetData startOfCleaning (startOfCleaning + cleaningSpan) noDiff
+            //let! yesterdayCleaning = Remoting.GetData (startOfCleaning - daySpan) (startOfCleaning + cleaningSpan-daySpan) daySpan
+            //do CreateChart cleaningChart.Body "day (between 6h30 and 7h30)" {TimeFormat with hour="%H:%M"} todayCleaning yesterdayCleaning
         } |> Async.Start
 
     let Main () =
