@@ -81,5 +81,6 @@ module Client =
 
     let Main () =
         RefreshData()
-        Div [] -< [dayChart; weekChart; monthChart; cleaningChart]
+        Div [] -< [dayChart; weekChart; monthChart]
+        //Div [] -< [dayChart; weekChart; monthChart; cleaningChart]
 

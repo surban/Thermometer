@@ -7,27 +7,46 @@ open System.Net.Sockets
 open System.Threading
 open System.ComponentModel
 open System.Configuration.Install
+open System.IO.Ports
 
 
 module Thermometer =
     [<Literal>] 
     let sql_connection = "Data Source=srv-db.brml.tum.de\SQL2012;Initial Catalog=surban;Integrated Security=SSPI;"  
-    let thermometer_server = "cn-1.brml.tum.de"
-    let thermometer_port = 989
+    let thermometer_comport = "COM3"
 
     type dbSchema = SqlDataConnection<sql_connection>
     let db = dbSchema.GetDataContext()
 
     let getTemperature() =
         try
-            use client = new TcpClient(thermometer_server, thermometer_port)
-            use stream = client.GetStream()
+            use port = new SerialPort(thermometer_comport, 9600, Parity.None, 8, StopBits.One)
+            port.Handshake <- Handshake.None
+
+            port.Open()
+            port.DtrEnable <- false
+            port.RtsEnable <- false
+            Thread.Sleep(10)
+            port.DiscardInBuffer()
+            port.DtrEnable <- true
+            port.RtsEnable <- true
+            Thread.Sleep(1000)
+
             let buffer : byte[] = Array.zeroCreate 20
-            stream.Read(buffer, 0, Array.length buffer) |> ignore
-            let reply = System.Text.Encoding.ASCII.GetString(buffer).Split('C') 
-            reply |> Seq.head |> float |> Some
+            let n_read = port.Read(buffer, 0, Array.length buffer) 
+
+            port.DtrEnable <- false
+            port.RtsEnable <- false
+            port.Close()
+
+            let reply = System.Text.Encoding.ASCII.GetString(buffer)           
+            //printfn "Thermometer (%d bytes):\n%A" n_read reply.[0::n_read]
+            let tval = reply.Split('C') 
+            tval |> Seq.head |> float |> Some
         with
-            | _ -> None
+            | e -> 
+                printfn "Exception: %A" (e.ToString())
+                None
        
     let logTemperature timestamp temperature =
         let row = new dbSchema.ServiceTypes.Temperatures(Timestamp=timestamp,
@@ -51,9 +70,12 @@ module Thermometer =
 
 module Service = 
     let sampling_interval = 60000.
+    //let sampling_interval = 1000.
     let timer = new System.Timers.Timer(sampling_interval)
-    timer.AutoReset <- true
-    timer.Elapsed.Add (fun _ -> Thermometer.acquireAndLogTemperate())
+    timer.AutoReset <- false
+    timer.Elapsed.Add (fun _ -> 
+                            Thermometer.acquireAndLogTemperate()
+                            timer.Start())
 
     let startAcquire() =
         timer.Start()
